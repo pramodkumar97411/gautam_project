@@ -6,9 +6,9 @@ import java.awt.*;
 
 public class UIStyles {
     // Color Palette
-    public static final Color PRIMARY = new Color(79, 70, 229);      // Indigo
-    public static final Color PRIMARY_DARK = new Color(67, 56, 202);
-    public static final Color SECONDARY = new Color(16, 185, 129);   // Emerald
+    public static final Color PRIMARY = new Color(14, 116, 144);     // Teal
+    public static final Color PRIMARY_DARK = new Color(15, 76, 92);  // Dark Teal
+    public static final Color SECONDARY = new Color(34, 197, 94);    // Green
     public static final Color BACKGROUND = new Color(249, 250, 251);
     public static final Color CARD_BG = Color.WHITE;
     public static final Color TEXT_PRIMARY = new Color(17, 24, 39);
@@ -16,6 +16,7 @@ public class UIStyles {
     public static final Color BORDER = new Color(229, 231, 235);
     public static final Color DANGER = new Color(239, 68, 68);
     public static final Color WARNING = new Color(245, 158, 11);
+    public static final Color ACCENT = new Color(59, 130, 246);      // Blue accent
     
     // Fonts
     public static final Font TITLE_FONT = new Font("Segoe UI", Font.BOLD, 28);
@@ -32,7 +33,25 @@ public class UIStyles {
         btn.setBorderPainted(false);
         btn.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btn.setPreferredSize(new Dimension(140, 40));
+
+        btn.addMouseListener(new java.awt.event.MouseAdapter() {
+            Color originalColor = bg;
+            public void mouseEntered(java.awt.event.MouseEvent e) {
+                btn.setBackground(brightenColor(originalColor));
+            }
+            public void mouseExited(java.awt.event.MouseEvent e) {
+                btn.setBackground(originalColor);
+            }
+        });
+
         return btn;
+    }
+
+    private static Color brightenColor(Color color) {
+        int r = Math.min(255, (int)(color.getRed() * 1.2));
+        int g = Math.min(255, (int)(color.getGreen() * 1.2));
+        int b = Math.min(255, (int)(color.getBlue() * 1.2));
+        return new Color(r, g, b);
     }
     
     public static JTextField createStyledTextField() {

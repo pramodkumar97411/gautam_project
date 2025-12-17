@@ -21,10 +21,10 @@ public class DashboardPanel extends JPanel {
         JPanel statsGrid = new JPanel(new GridLayout(1, 4, 20, 0));
         statsGrid.setOpaque(false);
         
-        statsGrid.add(createStatCard("👥 Total Members", String.valueOf(MemberService.getInstance().getAllMembers().size()), UIStyles.PRIMARY));
-        statsGrid.add(createStatCard("✅ Active Today", "12", UIStyles.SECONDARY));
-        statsGrid.add(createStatCard("⏰ Expiring Soon", "5", UIStyles.WARNING));
-        statsGrid.add(createStatCard("💰 Revenue", "$4,250", new Color(139, 92, 246)));
+        statsGrid.add(createStatCard("Total Members", String.valueOf(MemberService.getInstance().getAllMembers().size()), UIStyles.PRIMARY));
+        statsGrid.add(createStatCard("Active Today", "12", UIStyles.SECONDARY));
+        statsGrid.add(createStatCard("Expiring Soon", "5", UIStyles.WARNING));
+        statsGrid.add(createStatCard("Revenue", "$4,250", UIStyles.ACCENT));
         
         JPanel centerPanel = new JPanel(new BorderLayout(0, 20));
         centerPanel.setOpaque(false);
@@ -35,9 +35,16 @@ public class DashboardPanel extends JPanel {
         JTextArea activityLog = new JTextArea();
         activityLog.setEditable(false);
         activityLog.setFont(UIStyles.BODY_FONT);
-        activityLog.setText("• John Doe checked in at 9:00 AM\n• Jane Smith membership renewed\n• New member: Mike Johnson\n• Equipment maintenance scheduled");
-        activityLog.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 0));
-        activityCard.add(new JScrollPane(activityLog), BorderLayout.CENTER);
+        activityLog.setForeground(UIStyles.TEXT_PRIMARY);
+        activityLog.setBackground(UIStyles.CARD_BG);
+        activityLog.setLineWrap(true);
+        activityLog.setWrapStyleWord(true);
+        activityLog.setText("09:00 AM - John Doe checked in\n09:15 AM - Jane Smith membership renewed\n09:30 AM - New member registered: Mike Johnson\n10:00 AM - Equipment maintenance scheduled\n10:30 AM - Alice Cooper checked in\n11:00 AM - Payment received from Bob Wilson");
+        activityLog.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+
+        JScrollPane scrollPane = new JScrollPane(activityLog);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        activityCard.add(scrollPane, BorderLayout.CENTER);
         
         centerPanel.add(activityCard, BorderLayout.CENTER);
         add(centerPanel, BorderLayout.CENTER);

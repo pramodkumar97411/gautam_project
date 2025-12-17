@@ -89,16 +89,15 @@ public class AddMemberPanel extends JPanel {
         String name = nameField.getText().trim();
         String email = emailField.getText().trim();
         String phone = phoneField.getText().trim();
-        
+
         if (name.isEmpty() || email.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Please fill all required fields", "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
-        
-        Member member = new Member(name, email, phone, membershipType.getSelectedItem().toString());
-        MemberService.getInstance().addMember(member);
-        
-        JOptionPane.showMessageDialog(this, "Member added successfully! ✅", "Success", JOptionPane.INFORMATION_MESSAGE);
+
+        MemberService.getInstance().addMember(name, email, phone, membershipType.getSelectedItem().toString());
+
+        JOptionPane.showMessageDialog(this, "Member added successfully!", "Success", JOptionPane.INFORMATION_MESSAGE);
         nameField.setText("");
         emailField.setText("");
         phoneField.setText("");

@@ -32,13 +32,23 @@ public class MemberListPanel extends JPanel {
         searchPanel.setOpaque(false);
         searchField = UIStyles.createStyledTextField();
         searchField.setPreferredSize(new Dimension(250, 40));
-        searchField.putClientProperty("JTextField.placeholderText", "🔍 Search members...");
-        
+
+        searchField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                searchMembers();
+            }
+        });
+
         JButton refreshBtn = UIStyles.createStyledButton("Refresh", UIStyles.SECONDARY);
         refreshBtn.addActionListener(e -> refreshTable());
-        
+
+        JButton deleteBtn = UIStyles.createStyledButton("Delete", UIStyles.DANGER);
+        deleteBtn.addActionListener(e -> deleteMember());
+
+        searchPanel.add(new JLabel("Search:"));
         searchPanel.add(searchField);
         searchPanel.add(refreshBtn);
+        searchPanel.add(deleteBtn);
         header.add(searchPanel, BorderLayout.EAST);
         
         add(header, BorderLayout.NORTH);
@@ -77,6 +87,43 @@ public class MemberListPanel extends JPanel {
         List<Member> members = MemberService.getInstance().getAllMembers();
         for (Member m : members) {
             model.addRow(new Object[]{m.getId(), m.getName(), m.getEmail(), m.getPhone(), m.getMembershipType(), "Active"});
+        }
+    }
+
+    private void searchMembers() {
+        String query = searchField.getText().trim();
+        model.setRowCount(0);
+
+        if (query.isEmpty()) {
+            refreshTable();
+            return;
+        }
+
+        List<Member> results = MemberService.getInstance().searchMembers(query);
+        for (Member m : results) {
+            model.addRow(new Object[]{m.getId(), m.getName(), m.getEmail(), m.getPhone(), m.getMembershipType(), "Active"});
+        }
+    }
+
+    private void deleteMember() {
+        int selectedRow = table.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(this, "Please select a member to delete", "No Selection", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        int id = (int) table.getValueAt(selectedRow, 0);
+        String name = (String) table.getValueAt(selectedRow, 1);
+
+        int confirm = JOptionPane.showConfirmDialog(this,
+            "Are you sure you want to delete " + name + "?",
+            "Confirm Delete",
+            JOptionPane.YES_NO_OPTION);
+
+        if (confirm == JOptionPane.YES_OPTION) {
+            MemberService.getInstance().deleteMember(id);
+            refreshTable();
+            JOptionPane.showMessageDialog(this, "Member deleted successfully", "Success", JOptionPane.INFORMATION_MESSAGE);
         }
     }
 }

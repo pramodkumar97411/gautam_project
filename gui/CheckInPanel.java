@@ -1,5 +1,6 @@
 package gui;
 
+import utils.UIStyles;
 import models.Member;
 import services.MemberService;
 import javax.swing.*;
@@ -9,53 +10,71 @@ import java.time.format.DateTimeFormatter;
 
 public class CheckInPanel extends JPanel {
     private JTextArea logArea;
+    private MemberService service;
 
-    public CheckInPanel(MemberService service) {
-        setLayout(new BorderLayout());
-        setBackground(Color.WHITE);
+    public CheckInPanel() {
+        this.service = MemberService.getInstance();
+        setLayout(new BorderLayout(20, 20));
+        setBackground(UIStyles.BACKGROUND);
+        setBorder(BorderFactory.createEmptyBorder(30, 30, 30, 30));
 
-        JLabel header = new JLabel("Member Check-In", SwingConstants.CENTER);
-        header.setFont(new Font("Arial", Font.BOLD, 24));
-        header.setBorder(BorderFactory.createEmptyBorder(30, 0, 20, 0));
-        add(header, BorderLayout.NORTH);
+        JLabel title = new JLabel("Member Check-In");
+        title.setFont(UIStyles.TITLE_FONT);
+        title.setForeground(UIStyles.TEXT_PRIMARY);
+        add(title, BorderLayout.NORTH);
 
-        JPanel centerPanel = new JPanel(new BorderLayout());
-        centerPanel.setBackground(Color.WHITE);
-        centerPanel.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
+        JPanel card = new JPanel(new BorderLayout(15, 15));
+        card.setBackground(UIStyles.CARD_BG);
+        card.setBorder(BorderFactory.createCompoundBorder(
+            new javax.swing.border.LineBorder(UIStyles.BORDER, 1, true),
+            BorderFactory.createEmptyBorder(25, 25, 25, 25)
+        ));
 
-        JPanel inputPanel = new JPanel();
-        inputPanel.setBackground(Color.WHITE);
-        JTextField idField = new JTextField(10);
-        JButton checkInBtn = new JButton("Check In");
-        checkInBtn.setBackground(new Color(52, 152, 219));
-        checkInBtn.setForeground(Color.WHITE);
+        JPanel inputPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 15, 10));
+        inputPanel.setBackground(UIStyles.CARD_BG);
 
-        inputPanel.add(new JLabel("Member ID:"));
+        JLabel idLabel = new JLabel("Member ID:");
+        idLabel.setFont(UIStyles.BODY_FONT);
+        idLabel.setForeground(UIStyles.TEXT_SECONDARY);
+
+        JTextField idField = UIStyles.createStyledTextField();
+        idField.setPreferredSize(new Dimension(200, 40));
+
+        JButton checkInBtn = UIStyles.createStyledButton("Check In", UIStyles.SECONDARY);
+        checkInBtn.setPreferredSize(new Dimension(120, 40));
+
+        inputPanel.add(idLabel);
         inputPanel.add(idField);
         inputPanel.add(checkInBtn);
-        centerPanel.add(inputPanel, BorderLayout.NORTH);
+        card.add(inputPanel, BorderLayout.NORTH);
 
         logArea = new JTextArea();
         logArea.setEditable(false);
-        logArea.setFont(new Font("Monospaced", Font.PLAIN, 14));
-        centerPanel.add(new JScrollPane(logArea), BorderLayout.CENTER);
+        logArea.setFont(new Font("Monospaced", Font.PLAIN, 13));
+        logArea.setBackground(UIStyles.BACKGROUND);
+        logArea.setBorder(BorderFactory.createEmptyBorder(10, 10, 10, 10));
+        JScrollPane scrollPane = new JScrollPane(logArea);
+        scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        card.add(scrollPane, BorderLayout.CENTER);
 
         checkInBtn.addActionListener(e -> {
             try {
-                int id = Integer.parseInt(idField.getText());
+                int id = Integer.parseInt(idField.getText().trim());
                 Member m = service.getMember(id);
                 String time = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
                 if (m != null) {
-                    logArea.append("[" + time + "] CHECK-IN: " + m.getName() + " (ID: " + id + ")\n");
+                    logArea.append("[" + time + "] CHECK-IN: " + m.getName() + " - " + m.getMembershipType() + " (ID: " + id + ")\n");
+                    logArea.setCaretPosition(logArea.getDocument().getLength());
                 } else {
                     logArea.append("[" + time + "] ERROR: Member ID " + id + " not found\n");
+                    logArea.setCaretPosition(logArea.getDocument().getLength());
                 }
                 idField.setText("");
             } catch (NumberFormatException ex) {
-                JOptionPane.showMessageDialog(this, "Please enter a valid ID");
+                JOptionPane.showMessageDialog(this, "Please enter a valid ID", "Invalid Input", JOptionPane.ERROR_MESSAGE);
             }
         });
 
-        add(centerPanel, BorderLayout.CENTER);
+        add(card, BorderLayout.CENTER);
     }
 }

@@ -30,6 +30,9 @@ public class MainFrame extends JFrame {
         contentPanel.add(new MemberListPanel(), "members");
         contentPanel.add(new AddMemberPanel(), "add");
         contentPanel.add(new CheckInPanel(), "checkin");
+        contentPanel.add(new StatisticsPanel(), "statistics");
+        contentPanel.add(new PaymentPanel(), "payments");
+        contentPanel.add(new MemberProfilePanel(), "profile");
         
         mainPanel.add(contentPanel, BorderLayout.CENTER);
         add(mainPanel);
@@ -55,7 +58,10 @@ public class MainFrame extends JFrame {
             {"📊 Dashboard", "dashboard"},
             {"👥 Members", "members"},
             {"➕ Add Member", "add"},
-            {"✅ Check-In", "checkin"}
+            {"✅ Check-In", "checkin"},
+            {"📈 Statistics", "statistics"},
+            {"💳 Payments", "payments"},
+            {"👤 Profile", "profile"}
         };
         
         for (String[] item : navItems) {
@@ -90,7 +96,7 @@ public class MainFrame extends JFrame {
         
         btn.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent e) {
-                btn.setBackground(new Color(99, 102, 241));
+                btn.setBackground(UIStyles.PRIMARY);
             }
             public void mouseExited(java.awt.event.MouseEvent e) {
                 btn.setBackground(UIStyles.PRIMARY_DARK);
